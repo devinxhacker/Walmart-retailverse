@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Markerless Shoe Try-On</title>
+  <style>
+    body, html {
+      margin: 0;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    #video, #canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <!-- Live camera feed -->
+  <video id="video" autoplay playsinline muted></video>
+  <!-- WebGL canvas for 3D model -->
+  <canvas id="canvas"></canvas>
+
+  <!-- TensorFlow + backend -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.13.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-cpu"></script>
+
+  <!-- Pose detection -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose"></script>
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+  <!-- Your custom script -->
+  <script src="script.js"></script>
+</body>
+</html>

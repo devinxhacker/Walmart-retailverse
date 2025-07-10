@@ -1,0 +1,88 @@
+.profile-container {
+  max-width: 700px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 2rem 2.5vw;
+}
+.profile-info {
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  color: #222;
+}
+.orders-list {
+  margin-top: 1.5rem;
+}
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #f6f6f6;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.orders-table th, .orders-table td {
+  padding: 0.7rem 1rem;
+  text-align: left;
+}
+.orders-table th {
+  background: #0071dc;
+  color: #fff;
+  font-weight: 600;
+}
+.orders-table tr:nth-child(even) {
+  background: #e9f1fb;
+}
+.profile-loading, .profile-error {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #0071dc;
+  margin-top: 2rem;
+}
+.profile-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.profile-edit-form label {
+  font-weight: 500;
+  margin-right: 0.5rem;
+}
+.profile-edit-form input {
+  padding: 0.6rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-left: 0.5rem;
+}
+.profile-edit-form button {
+  background: #0071dc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.7rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 0.5rem;
+  width: fit-content;
+}
+.profile-edit-form button:disabled {
+  background: #b3d4fc;
+  cursor: not-allowed;
+}
+.profile-edit-form button:hover:not(:disabled) {
+  background: #005cb8;
+}
+.profile-edit-error {
+  color: #d32f2f;
+  font-size: 0.98rem;
+  margin-top: 0.5rem;
+}
+.profile-edit-success {
+  color: #388e3c;
+  font-size: 0.98rem;
+  margin-top: 0.5rem;
+} 

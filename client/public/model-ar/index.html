@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RetailVerse AR</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+
+    model-viewer {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+    }
+
+    .controls-panel {
+      position: absolute;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,0.95);
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      padding: 16px 24px;
+      z-index: 1001;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .controls-panel label {
+      font-size: 14px;
+      margin-right: 6px;
+    }
+
+    .ar-button, .regen-button {
+      background: #007AFF;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: background 0.2s;
+      margin-left: 8px;
+    }
+
+    .ar-button:hover, .regen-button:hover {
+      background: #0056CC;
+    }
+
+    .regen-button {
+      background: #FF3B30;
+    }
+
+    .regen-button:hover {
+      background: #b71c1c;
+    }
+
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #666;
+      font-size: 18px;
+    }
+
+    .ar-not-supported {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #FF3B30;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      text-align: center;
+      max-width: 300px;
+    }
+
+    /* Debug info */
+    .debug-info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      max-width: 300px;
+      z-index: 1011;
+    }
+  </style>
+</head>
+<body>
+  <!-- Debug Info -->
+  <div class="debug-info" id="debugInfo" style="display:none">
+    Loading...
+  </div>
+
+  <model-viewer 
+    src="" id="neutral-demo"
+    ar 
+    ar-modes="scene-viewer webxr quick-look"
+    camera-controls 
+    auto-rotate 
+    skybox-image="https://cdn.polyhaven.com/asset_img/primary/kloofendal_28d_misty_puresky.png?height=760&quality=95"
+    environment-image="neutral"
+    shadow-intensity="1.2"
+    shadow-softness="1"
+    exposure="1.2"
+    camera-orbit="0deg 75deg 2.5m"
+    min-camera-orbit="auto auto 2m"
+    max-camera-orbit="auto auto 3m"
+    alt="Sofa Model"
+    loading="eager"
+    reveal="auto"
+    ar-scale="auto"
+    ar-placement="floor">
+
+
+    <!-- Loading indicator -->
+    <div class="loading" slot="poster">
+      Loading 3D Model...
+    </div>
+    
+    <!-- AR Button -->
+    <button slot="ar-button" class="ar-button">
+      👀 View in your space
+    </button>
+    
+    <!-- Fallback when AR is not supported -->
+    <div slot="ar-not-supported" class="ar-not-supported">
+      AR not supported on this device. Try opening on a mobile device with AR capabilities.
+    </div>
+    
+  </model-viewer>
+
+  <div class="controls-panel">
+    <label for="exposure">Exposure:</label>
+    <input type="range" id="exposure" min="0.5" max="2.5" step="0.05" value="1.2">
+    <label for="shadow">Shadow:</label>
+    <input type="range" id="shadow" min="0" max="2" step="0.05" value="1.2">
+    <label for="brightness">Brightness:</label>
+    <input type="range" id="brightness" min="0.5" max="2" step="0.05" value="1">
+    <label for="env">Neutral Light</label>
+    <input type="checkbox" id="env" checked>
+    <button class="regen-button" id="regenBtn">♻️ Regenerate Model</button>
+  </div>
+
+  <script>
+    const modelViewer = document.querySelector('#neutral-demo');
+    const exposureSlider = document.getElementById('exposure');
+    const shadowSlider = document.getElementById('shadow');
+    const brightnessSlider = document.getElementById('brightness');
+    const envCheckbox = document.getElementById('env');
+    const regenBtn = document.getElementById('regenBtn');
+
+    // Dynamically set model src from query param
+    function getQueryParam(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+    const modelName = getQueryParam('model');
+    if (modelName) {
+      modelViewer.src = `/models/${modelName}`;
+    } else {
+      modelViewer.src = "https://trellis-community-trellis.hf.space/gradio_api/file=/tmp/gradio/43cc007b8d555434fea57500fad63f40c41f4ae35f1f60c039a3f76d48b840e8/sample.glb";
+    }
+
+    // Lighting controls
+    exposureSlider.addEventListener('input', () => {
+      modelViewer.exposure = exposureSlider.value;
+    });
+    shadowSlider.addEventListener('input', () => {
+      modelViewer.shadowIntensity = shadowSlider.value;
+    });
+    envCheckbox.addEventListener('change', () => {
+      modelViewer.environmentImage = envCheckbox.checked ? 'neutral' : 'legacy';
+    });
+
+    // Brightness control using CSS filter
+    brightnessSlider.addEventListener('input', () => {
+      modelViewer.style.filter = `brightness(${brightnessSlider.value})`;
+    });
+
+    // Initialize brightness
+    modelViewer.style.filter = `brightness(${brightnessSlider.value})`;
+
+    // Regenerate Model button
+    regenBtn.addEventListener('click', async () => {
+      if (!modelName) return;
+      try {
+        // alert('Regenerating model:'+ modelName);
+        const del = await fetch(`/models/${modelName}`, { method: 'DELETE' });
+        if (!del.ok) throw new Error('Failed to delete existing model');
+        alert('Model deleted successfully. Regenerate it through product page...');
+        // window.close(); // Try to close the tab/window
+        // setTimeout(() => { window.close(); }, 1000); // Fallback: redirect home
+      } catch (e) {
+        alert('Failed to delete model.');
+      }
+    });
+  </script>
+</body>
+</html>

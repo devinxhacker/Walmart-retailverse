@@ -1,0 +1,135 @@
+.admin-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 2rem 2.5vw;
+}
+.admin-tabs {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+.admin-tabs button {
+  background: #e9f1fb;
+  color: #0071dc;
+  border: none;
+  border-radius: 4px 4px 0 0;
+  padding: 0.7rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.admin-tabs button.active, .admin-tabs button:hover {
+  background: #0071dc;
+  color: #fff;
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #f6f6f6;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.admin-table th, .admin-table td {
+  padding: 0.7rem 1rem;
+  text-align: left;
+}
+.admin-table th {
+  background: #0071dc;
+  color: #fff;
+  font-weight: 600;
+}
+.admin-table tr:nth-child(even) {
+  background: #e9f1fb;
+}
+.admin-error {
+  color: #d32f2f;
+  font-size: 1.05rem;
+  margin-top: 1rem;
+}
+.admin-delete-btn {
+  background: #d32f2f;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: background 0.2s;
+}
+.admin-delete-btn:hover {
+  background: #b71c1c;
+}
+.admin-product-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+.admin-product-form input {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  min-width: 120px;
+}
+.admin-product-form button[type="submit"] {
+  background: #0071dc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.admin-product-form button[type="submit"]:disabled {
+  background: #b3d4fc;
+  cursor: not-allowed;
+}
+.admin-product-form button[type="submit"]:hover:not(:disabled) {
+  background: #005cb8;
+}
+.admin-product-form button[type="button"] {
+  background: #e9f1fb;
+  color: #0071dc;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: background 0.2s, color 0.2s;
+}
+.admin-product-form button[type="button"]:hover {
+  background: #0071dc;
+  color: #fff;
+}
+.admin-edit-btn {
+  background: #ffc220;
+  color: #222;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  transition: background 0.2s;
+}
+.admin-edit-btn:hover {
+  background: #ffb300;
+}
+.admin-success {
+  color: #388e3c;
+  font-size: 1.05rem;
+  margin-top: 0.5rem;
+} 

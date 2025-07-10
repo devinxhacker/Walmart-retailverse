@@ -1,0 +1,220 @@
+.wm-details-page {
+  max-width: 1100px;
+  margin: 40px auto 0 auto;
+  padding: 32px 16px 60px 16px;
+  background: linear-gradient(135deg, #f7fafc 60%, #e0e7ff 100%);
+  border-radius: 24px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.09);
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.wm-details-main-card {
+  display: flex;
+  gap: 40px;
+  align-items: stretch;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  padding: 32px 24px;
+  animation: detailsFadeIn 0.7s cubic-bezier(.4,1.4,.6,1) both;
+}
+
+@keyframes detailsFadeIn {
+  0% { opacity: 0; transform: translateY(40px) scale(0.97); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.wm-details-image-col {
+  flex: 1 1 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(120deg, #f0f4ff 60%, #e0e7ff 100%);
+  border-radius: 16px;
+  min-width: 320px;
+  min-height: 340px;
+  box-shadow: 0 2px 12px rgba(80,120,255,0.07);
+}
+
+.wm-details-image {
+  max-width: 95%;
+  max-height: 340px;
+  border-radius: 14px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+  background: #fff;
+  object-fit: contain;
+  transition: transform 0.25s cubic-bezier(.4,1.4,.6,1);
+}
+
+.wm-details-image:hover {
+  transform: scale(1.04) rotate(-2deg);
+}
+
+.wm-details-info-col {
+  flex: 2 1 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  justify-content: center;
+}
+
+.wm-details-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #1a237e;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.details-heart {
+  font-size: 1.7rem;
+  margin-left: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+  color: #e0a800;
+  filter: drop-shadow(0 1px 2px #ffd70044);
+}
+.details-heart.wished {
+  color: #e53935;
+  filter: drop-shadow(0 2px 4px #e5393555);
+  animation: heartPop 0.3s cubic-bezier(.4,1.4,.6,1);
+}
+@keyframes heartPop {
+  0% { transform: scale(1); }
+  60% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+.wm-details-price {
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: #0d47a1;
+  margin-bottom: 4px;
+}
+
+.wm-details-desc {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.wm-details-stock {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #388e3c;
+  margin-bottom: 8px;
+}
+
+.wm-details-stock:contains('Out of Stock') {
+  color: #e53935;
+}
+
+.wm-details-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.wm-details-cart-btn {
+  background: linear-gradient(90deg, #ffd600 60%, #ff9800 100%);
+  color: #222;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-size: 1.08rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #ffd60033;
+  transition: background 0.2s, transform 0.18s;
+}
+.wm-details-cart-btn:hover {
+  background: linear-gradient(90deg, #ff9800 60%, #ffd600 100%);
+  transform: scale(1.06);
+}
+
+.wm-details-3d-btn {
+  background: linear-gradient(90deg, #42a5f5 60%, #7e57c2 100%);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 1.08rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #42a5f533;
+  transition: background 0.2s, transform 0.18s;
+  margin-left: 6px;
+}
+.wm-details-3d-btn:hover {
+  background: linear-gradient(90deg, #7e57c2 60%, #42a5f5 100%);
+  transform: scale(1.06) rotate(-2deg);
+}
+
+.wm-details-related-section {
+  margin-top: 30px;
+  background: #f7fafc;
+  border-radius: 16px;
+  padding: 24px 18px 18px 18px;
+  box-shadow: 0 2px 12px rgba(80,120,255,0.07);
+}
+
+.wm-details-related-section h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1a237e;
+  margin-bottom: 18px;
+}
+
+.wm-details-related-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: flex-start;
+}
+
+.wm-details-no-related {
+  color: #888;
+  font-size: 1.1rem;
+  padding: 18px 0;
+}
+
+.details-loading, .details-error {
+  font-size: 1.2rem;
+  color: #7e57c2;
+  text-align: center;
+  margin: 60px 0;
+}
+
+@media (max-width: 900px) {
+  .wm-details-main-card {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 20px 8px;
+  }
+  .wm-details-image-col {
+    min-width: 220px;
+    min-height: 220px;
+  }
+}
+
+@media (max-width: 600px) {
+  .wm-details-page {
+    padding: 8px 2px 40px 2px;
+  }
+  .wm-details-main-card {
+    padding: 10px 2px;
+  }
+  .wm-details-related-section {
+    padding: 10px 2px 8px 2px;
+  }
+  .wm-details-related-grid {
+    gap: 10px;
+  }
+} 

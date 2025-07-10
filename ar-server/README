@@ -1,0 +1,38 @@
+# Gradio API Server
+
+This server acts as a proxy to the `trellis-community/TRELLIS` Gradio application, exposing its API endpoints via a standard RESTful interface.
+
+## Setup
+
+1.  **Save the files**: Save the `server.js` and `package.json` files from above into a new project directory.
+
+2.  **Install dependencies**: Open your terminal in the project directory and run:
+    ```bash
+    npm install
+    ```
+
+## Running the Server
+
+To start the server, run one of the following commands:
+
+-   For production:
+    ```bash
+    npm start
+    ```
+-   For development (with automatic restarts on file changes):
+    ```bash
+    npm run dev
+    ```
+
+The server will start on `http://localhost:3000` by default.
+
+## API Usage Examples
+
+You can interact with the server using any HTTP client, like `curl` or Postman.
+
+#### Example: Get a random seed
+
+```bash
+curl -X POST -H "Content-Type: application/json" \
+  -d '{ "randomize_seed": true, "seed": 42 }' \
+  http://localhost:3000/get_seed
