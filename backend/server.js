@@ -8,6 +8,7 @@ const productRoutes = require('./routes/product');
 const orderRoutes = require('./routes/order');
 const generateModelRoutes = require('./routes/generateModel');
 const Product = require('./models/Product');
+const chatbotRoutes = require('./routes/chatbot');
 
 const app = express();
 
@@ -89,6 +90,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api', generateModelRoutes);
+app.use('/api/chatbot', chatbotRoutes); // Add this line
+
 
 const PORT = process.env.PORT || 5000;
 
