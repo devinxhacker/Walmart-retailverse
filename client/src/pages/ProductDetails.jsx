@@ -50,12 +50,11 @@ const ProductDetails = () => {
     // Generate a unique model filename from the image URL (base64 or hash)
     const btn3d = document.getElementById("btn3d");
     btn3d.disabled = true;
-    btn3d.classList.add("loading");
     setTextTo3D("Loading...");
 
     const imageUrl = product.image;
     console.log('Image URL:', imageUrl);
-    const modelName = btoa(imageUrl).replace(/[^a-zA-Z0-9]/g, '').slice(0, 32) + '.glb';
+    const modelName = `ar_model_${product._id}.glb`;
     console.log('Model Name:', modelName);
 
     const modelPath = `/models/${modelName}`;
@@ -72,7 +71,6 @@ const ProductDetails = () => {
           window.open(`${window.location.origin}/model-ar/index.html?model=${modelName}`, '_blank');
           console.log('Model already exists:', modelUrl);
           btn3d.disabled = false;
-          btn3d.classList.remove("loading");
           return;
         }
       } catch (e) {
@@ -91,7 +89,6 @@ const ProductDetails = () => {
       if (!genRes.ok) { 
         setTextTo3D("Try Again Later");
         btn3d.disabled = false;
-        btn3d.classList.remove("loading");
         throw new Error('Failed to generate 3D model'); 
       }
       // Redirect to viewer after successful generation
@@ -100,13 +97,11 @@ const ProductDetails = () => {
       window.open(`${window.location.origin}/model-ar/index.html?model=${modelName}`, '_blank');
       console.log('3D model generated successfully:', modelUrl);
       btn3d.disabled = false;
-      btn3d.classList.remove("loading");
     } catch (err) {
       alert('Failed to generate 3D model. Please try again later.');
       console.error('Error generating 3D model:', err);
       setTextTo3D("Try Again Later");
       btn3d.disabled = false;
-      btn3d.classList.remove("loading");
     }
   };
 
@@ -137,7 +132,7 @@ const ProductDetails = () => {
                 ))}
               </select>
               <button className="add-cart-btn wm-details-cart-btn" onClick={handleAddToCart}>Add to Cart</button>
-              <button id="btn3d" className="wm-details-3d-btn" onClick={handle3DView}>{textto3d}</button>
+              <button id="btn3d" className="wm-details-3d-btn" style={{ color: 'white' }} onClick={handle3DView}>{textto3d}</button>
             </div>
           )}
         </div>

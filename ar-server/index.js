@@ -157,10 +157,14 @@ import fetch from 'node-fetch'; // Make sure you have node-fetch installed: npm 
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
 
+dotenv.config();
 
 const app = express();
 const port = 3000;
+
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -177,9 +181,8 @@ app.post('/generate-3d-model', async (req, res) => {
     }
 
     try {
-        const client = await Client.connect("trellis-community/TRELLIS", {
-            hf_token: process.env.HF_TOKEN // <-- Use your actual token here
-        });
+        const hftoken = process.env.HF_TOKEN; // Ensure you have set this environment variable
+        const client = await Client.connect("trellis-community/TRELLIS", {hf_token: hftoken});
         if (!client) {
             throw new Error("Failed to connect to Gradio client.");
         }
@@ -281,7 +284,7 @@ app.delete('/delete-3d-model', async (req, res) => {
         if (result.success) {
 
             return res.json({ message: "3D model deleted successfully." });
-            
+
         }
 
         
