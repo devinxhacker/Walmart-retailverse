@@ -217,8 +217,7 @@
     ar 
     ar-modes="scene-viewer webxr quick-look"
     camera-controls 
-    auto-rotate 
-    skybox-image="https://cdn.polyhaven.com/asset_img/primary/kloofendal_28d_misty_puresky.png?height=760&quality=95"
+    auto-rotate
     environment-image="neutral"
     shadow-intensity="1.2"
     shadow-softness="1"
@@ -273,6 +272,7 @@
     const brightnessSlider = document.getElementById('brightness');
     const envCheckbox = document.getElementById('env');
     const regenBtn = document.getElementById('regenBtn');
+    const skyboxUrl = 'https://cdn.polyhaven.com/asset_img/primary/kloofendal_28d_misty_puresky.png?height=760&quality=95';
 
     // Dynamically set model src from query param
     function getQueryParam(name) {
@@ -300,7 +300,7 @@
       modelViewer.shadowIntensity = shadowSlider.value;
     });
     envCheckbox.addEventListener('change', () => {
-      modelViewer.environmentImage = envCheckbox.checked ? 'neutral' : 'legacy';
+      modelViewer.environmentImage = envCheckbox.checked ? 'neutral' : skyboxUrl;
     });
 
     brightnessSlider.addEventListener('input', () => {
