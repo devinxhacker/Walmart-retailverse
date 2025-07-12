@@ -10,6 +10,12 @@ const productSchema = new mongoose.Schema({
   countInStock: { type: Number, required: true },
   rating: { type: Number, default: 0 },
   numReviews: { type: Number, default: 0 },
+  reviews: [
+    {
+      username: { type: String},
+      description: { type: String }
+    }
+  ]
 }, { timestamps: true });
 
-module.exports = mongoose.model('Product', productSchema); 
+module.exports = mongoose.model('Product', productSchema);

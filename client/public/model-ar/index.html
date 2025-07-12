@@ -204,16 +204,40 @@
 
     // Regenerate Model button
     regenBtn.addEventListener('click', async () => {
-      if (!modelName) return;
+      if (!modelName) {
+        alert('No model name found in URL to regenerate.');
+        return;
+      }
+
+      if (!confirm(`Are you sure you want to delete the model "${modelName}"? You will need to regenerate it from the product page.`)) {
+        return;
+      }
       try {
-        // alert('Regenerating model:'+ modelName);
-        const del = await fetch(`/models/${modelName}`, { method: 'DELETE' });
-        if (!del.ok) throw new Error('Failed to delete existing model');
-        alert('Model deleted successfully. Regenerate it through product page...');
-        // window.close(); // Try to close the tab/window
-        // setTimeout(() => { window.close(); }, 1000); // Fallback: redirect home
+        regenBtn.disabled = true;
+        regenBtn.textContent = 'Deleting...';
+
+        const response = await fetch('http://localhost:3000/delete-3d-model', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ modelName: modelName }),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || `Server error: ${response.status}`);
+        }
+
+        alert(result.message + ' You can now return to the product page to regenerate it.');
+        window.close(); // Close the AR viewer tab
       } catch (e) {
-        alert('Failed to delete model.');
+        console.error('Failed to delete model:', e);
+        alert(`Failed to delete model: ${e.message}`);
+      } finally {
+        regenBtn.disabled = false;
+        regenBtn.textContent = '♻️ Regenerate Model';
       }
     });
   </script>

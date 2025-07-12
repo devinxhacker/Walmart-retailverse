@@ -151,12 +151,22 @@
 
 // app.js
 import express from 'express';
+import cors from 'cors';
 import { Client, handle_file } from "@gradio/client"; // <-- Add handle_file
 import fetch from 'node-fetch'; // Make sure you have node-fetch installed: npm i node-fetch
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 
 const app = express();
 const port = 3000;
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Enable CORS for all routes and origins
+app.use(cors());
 app.use(express.json()); // Middleware to parse JSON request bodies
 
 app.post('/generate-3d-model', async (req, res) => {
@@ -236,6 +246,49 @@ app.post('/generate-3d-model', async (req, res) => {
     } catch (error) {
         console.error("Error during 3D model generation workflow:", error);
         res.status(500).json({ error: "Failed to generate 3D model.", details: error });
+    }
+});
+
+//function to delete a 3D model
+const delete3DModel = async (modelName) => {
+    const modelPath = path.join(__dirname, '..', 'client', 'public', 'models', `${modelName}`);
+    try {
+        await fs.unlink(modelPath);
+        console.log(`Model ${modelName} deleted successfully from ${modelPath}.`);
+        return { success: true };
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            console.warn(`Model not found for deletion: ${modelPath}`);
+            return { success: false, status: 404, message: '3D model not found.' };
+        }
+        console.error(`Error deleting model ${modelName}:`, error);
+        return { success: false, status: 500, message: 'Error deleting model file.' };
+    }
+};
+
+app.delete('/delete-3d-model', async (req, res) => {
+    try {
+        const { modelName } = req.body;
+        console.log("Received request to delete 3D model:", modelName);
+
+        if (!modelName) {
+            return res.status(400).json({ error: "Model name is required." });
+        }
+
+        // Call the appropriate function to delete the 3D model
+        const result = await delete3DModel(modelName);
+
+        if (result.success) {
+
+            return res.json({ message: "3D model deleted successfully." });
+            
+        }
+
+        
+        return res.status(result.status).json({ error: result.message });
+    } catch (error) {
+        console.error("Error during 3D model deletion workflow:", error);
+        res.status(500).json({ error: "Failed to delete 3D model.", details: error.message });
     }
 });
 
