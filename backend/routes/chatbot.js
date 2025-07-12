@@ -2,6 +2,7 @@ const express = require('express');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const Groq = require('groq-sdk');
 const Product = require('../models/Product');
+const { set } = require('mongoose');
 require('dotenv').config();
 
 const router = express.Router();
@@ -11,14 +12,23 @@ const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const geminiModel = gemini.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
 // Initialize Groq
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY, baseUrl: 'https://api.groq.io/v1', dangerouslyAllowBrowser: true });
 
-/**
- * Attempts to generate content with Gemini, falling back to Groq on timeout or error.
- * @param {string} prompt The prompt to send to the model.
- * @param {boolean} isStreaming Whether to use the streaming API.
- * @returns {Promise<{result: any, source: 'gemini' | 'groq'}>}
- */
+
+
+const getProductSchema = () => {
+  // Dynamically get a simplified schema representation
+  const schema = Product.schema.obj;
+  const schemaString = JSON.stringify(schema, (key, value) => {
+    if (typeof value === 'function' || (typeof value === 'object' && value.type)) {
+      return value.type ? value.type.name : 'Object';
+    }
+    return value;
+  }, 2);
+  return schemaString;
+};
+
+
 const generateContentWithFallback = async (prompt, isStreaming = false) => {
   const TIMEOUT_MS = 8000; // 8-second timeout for Gemini
 
@@ -45,41 +55,34 @@ const generateContentWithFallback = async (prompt, isStreaming = false) => {
     return { result: groqChatCompletion, source: 'groq' };
   }
 };
-const getProductSchema = () => {
-  // Dynamically get a simplified schema representation
-  const schema = Product.schema.obj;
-  const schemaString = JSON.stringify(schema, (key, value) => {
-    if (typeof value === 'function' || (typeof value === 'object' && value.type)) {
-      return value.type ? value.type.name : 'Object';
-    }
-    return value;
-  }, 2);
-  return schemaString;
-};
+
 
 router.post('/query', async (req, res) => {
-  const { message, history } = req.body;
+  const { message, history, targetIds } = req.body;
 
   if (!message) {
     return res.status(400).json({ error: 'Message is required' });
   }
 
-  // Format the conversation history for the prompt
-  const formattedHistory = (history || [])
-    .map(msg => `${msg.from === 'user' ? 'User' : 'Assistant'}: ${msg.text}`)
-    .join('\n');
+  console.log("History:", history);
+  console.log("Target Ids:", targetIds);
+
 
   try {
     // Step 1: Convert natural language to a MongoDB query (non-streaming)
     const queryGenerationPrompt = `
-      You are an expert MongoDB query generator. Your task is to convert a user's latest query into a valid MongoDB query object for a 'products' collection.
+      You are an expert MongoDB query generator. Your task is to convert a user's LATEST query into a valid MongoDB query object for a 'products' collection.
       Use the provided conversation history for context, especially for follow-up questions (e.g., "what about in red?").
+
+      Conversation History:
+      ${history}
+
+      Previous response Targeted Id/Ids:
+      ${targetIds}
+      remain to this target id/ids unless user Newest query move to anyother product topic.
 
       The product schema is as follows:
       ${getProductSchema()}
-
-      CONVERSATION HISTORY:
-      ${formattedHistory}
 
       Based on the user's NEWEST query below, generate a JSON object with three keys: 'query', 'sort', and 'limit'.
       - 'query': The MongoDB find() query object. Use regex for partial text matches on string fields.
@@ -88,7 +91,7 @@ router.post('/query', async (req, res) => {
 
       NEWEST User Query: "${message}"
 
-      Return ONLY the JSON object. Do not include any other text, explanations, or markdown formatting.
+      Return ONLY the raw JSON object. Do not include any other text, explanations, or markdown formatting.
     `;
 
     const { result: queryGenerationResult, source: querySource } = await generateContentWithFallback(queryGenerationPrompt, false);
@@ -104,7 +107,28 @@ router.post('/query', async (req, res) => {
     try {
       // The response might be wrapped in markdown, so we clean it.
       const cleanedJsonString = queryResponseText.replace(/```json\n|\n```/g, '').trim();
-      dbQuery = JSON.parse(cleanedJsonString);
+      let parsedQuery = JSON.parse(cleanedJsonString);
+
+      // Recursively transform any {$oid: "..."} objects into plain strings
+      // This prevents Mongoose CastError when the AI returns an ObjectId in extended JSON format.
+      const transformOid = (obj) => {
+        if (obj === null || typeof obj !== 'object') {
+          return obj;
+        }
+        if (Array.isArray(obj)) {
+          return obj.map(transformOid);
+        }
+        if (obj['$oid'] && Object.keys(obj).length === 1) {
+          return obj['$oid'];
+        }
+        for (const key in obj) {
+          if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            obj[key] = transformOid(obj[key]);
+          }
+        }
+        return obj;
+      };
+      dbQuery = transformOid(parsedQuery);
     } catch (e) {
       console.error('Error parsing model query response:', e, 'Raw response:', queryResponseText);
       return res.status(500).json({ message: "I had trouble understanding that. Could you please rephrase?" });
@@ -114,56 +138,13 @@ router.post('/query', async (req, res) => {
     const products = await Product.find(dbQuery.query || {})
       .sort(dbQuery.sort || {})
       .limit(dbQuery.limit || 5);
-
-    // Set headers for a streaming response
-    res.writeHead(200, {
-      'Content-Type': 'text/plain; charset=utf-8',
-      'Transfer-Encoding': 'chunked',
-      'X-Content-Type-Options': 'nosniff',
-    });
-
-    if (products.length === 0) {
-      res.write("I couldn't find any products matching your request. Please try asking something else!");
-      return res.end();
-    }
-
-    // Step 3: Generate a natural language response (streaming)
-    const responseGenerationPrompt = `
-      You are a friendly and helpful e-commerce chatbot assistant for a store called 'RetailVerse'. Your name is 'RetailBot'.
-      Based on the following product data that was found in the database, provide a concise and conversational answer to the user's LATEST query.
-      Do not just list the products. Summarize the findings in a helpful way.
-      If the user asked for a specific number of items, mention that you found them.
-      Keep your response friendly and brief.
-      
-      CONVERSATION HISTORY:
-      ${formattedHistory}
-      User: ${message}
-
-      Product Data:
-      ${JSON.stringify(products, null, 2)}
-    `;
-
-    const { result: streamResult, source: streamSource } = await generateContentWithFallback(responseGenerationPrompt, true);
-
-    if (streamSource === 'gemini') {
-      // Stream the response chunk by chunk from Gemini
-      for await (const chunk of streamResult.stream) {
-        const chunkText = chunk.text();
-        res.write(chunkText);
-      }
-    } else { // source is 'groq'
-      // Stream the response chunk by chunk from Groq
-      for await (const chunk of streamResult) {
-        res.write(chunk.choices[0]?.delta?.content || '');
-      }
-    }
-
-    res.end();
+  
+    res.json(products);
 
   } catch (error) {
     console.error('Error in chatbot query:', error);
-    if (!res.headersSent) res.status(500).json({ message: 'Sorry, something went wrong on my end. Please try again.' });
-    else res.end();
+    res.status(500).json({ message: 'Internal server error' });
+    
   }
 });
 

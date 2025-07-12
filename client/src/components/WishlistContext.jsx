@@ -22,6 +22,21 @@ export const WishlistProvider = ({ children }) => {
     setWishlist(prev => prev.filter(p => p._id !== id));
   };
 
+  
+  useEffect(() => {
+    const savedWishlist = localStorage.getItem('wishlist');
+    if (savedWishlist) {
+      try {
+        setWishlist(JSON.parse(savedWishlist));
+      } catch (e) {
+        console.error("Failed to parse wishlist from localStorage", e);
+        setWishlist([]);
+      }
+    }
+  }, []);
+
+
+
   const toggleWishlist = (product) => {
     setWishlist(prev => prev.find(p => p._id === product._id)
       ? prev.filter(p => p._id !== product._id)
@@ -30,9 +45,11 @@ export const WishlistProvider = ({ children }) => {
   };
 
   const itemCount = wishlist.length;
+  const clearWishlist = () => setWishlist([]);
+
 
   return (
-    <WishlistContext.Provider value={{ wishlist, addToWishlist, removeFromWishlist, toggleWishlist, itemCount }}>
+    <WishlistContext.Provider value={{ wishlist, toggleWishlist, clearWishlist }}>
       {children}
     </WishlistContext.Provider>
   );
