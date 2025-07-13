@@ -583,7 +583,7 @@ async function preProcessMessage(message){
           <div className="chat-header">
             <h2>Walmart Assistant</h2>
             <div className="header-buttons">
-              <button onClick={handleNewChat} className="new-chat-btn" title="New Chat">🔄</button>
+              <button style={{"font-size": "28px"}} onClick={handleNewChat} className="new-chat-btn" title="New Chat">+</button>
               <button onClick={toggleChat} className="close-btn" title="Close Chat">&times;</button>
             </div>
           </div>
@@ -612,15 +612,15 @@ async function preProcessMessage(message){
             />
             {recognition && (
               <button onClick={handleToggleConversationMode} className={`mic-btn ${isConversationMode ? 'conversation-mode' : ''} ${isListening ? 'listening' : ''}`} title="Conversation Mode">
-                🎤
+                ✨
               </button>
             )}
-            <button onClick={() => handleSend()} disabled={isLoading || !input.trim() || isConversationMode}>➤</button>
+            <button style={{"display":"flex", "font-size": "24px", "position": "relative", "right": "6px"}} onClick={() => handleSend()} disabled={isLoading || !input.trim() || isConversationMode}>➤</button>
           </div>
         </div>
       )}
       <button onClick={toggleChat} className="chat-toggle-btn">
-        {isOpen ? 'Close' : 'Chat'}
+        {isOpen ? '✖' : '💬'}
       </button>
     </div>
   );

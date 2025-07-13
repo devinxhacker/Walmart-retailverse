@@ -1,6 +1,6 @@
 .chatbot-container {
     position: fixed;
-    bottom: 32px;
+    bottom: 80px;
     right: 32px;
     z-index: 1000;
     font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
@@ -11,8 +11,8 @@
     color: #fff;
     border: none;
     border-radius: 50%;
-    width: 68px;
-    height: 68px;
+    width: 60px;
+    height: 60px;
     font-size: 20px;
     cursor: pointer;
     box-shadow: 0 6px 18px rgba(30,60,114,0.18), 0 1.5px 4px rgba(0,0,0,0.08);
@@ -20,10 +20,12 @@
     justify-content: center;
     align-items: center;
     transition: box-shadow 0.2s, background 0.2s;
-    position: relative;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
 }
 .chat-toggle-btn::before {
-    content: '🐭';
+    content: '';
     position: absolute;
     top: 8px;
     left: 8px;
@@ -48,8 +50,8 @@
     animation: chatbot-pop 0.3s cubic-bezier(.4,2,.6,1) 1;
 }
 button{
-    width: 30px;
-    height: 30px;
+    width: auto;
+    height: auto;
     text-align: center;
     display: block;
     align-items: center;
