@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const { mongoURI } = require('./config');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const productRoutes = require('./routes/product');
@@ -19,7 +18,10 @@ const modelCheckRoutes = require('./routes/modelCheck');
 app.use(modelCheckRoutes);
 
 // Connect to MongoDB
-mongoose.connect(mongoURI)
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.log(err));
 
