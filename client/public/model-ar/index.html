@@ -323,7 +323,7 @@
         regenBtn.disabled = true;
         regenBtn.textContent = 'Deleting...';
 
-        const response = await fetch('https://retailverse-ar.vercel.app/delete-3d-model', {
+        const response = await fetch('http://localhost:3000/delete-3d-model', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
