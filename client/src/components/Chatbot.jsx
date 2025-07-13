@@ -514,6 +514,13 @@ async function preProcessMessage(message){
 
   const speak = (text) => {
     if ('speechSynthesis' in window && text) {
+      // If already speaking, stop it
+      if (isSpeaking) {
+        speechSynthesis.cancel();
+        setIsSpeaking(false);
+        return;
+      }
+      
       speechSynthesis.cancel(); // Stop any previous speech
       const utterance = new SpeechSynthesisUtterance(text);
 
@@ -574,7 +581,7 @@ async function preProcessMessage(message){
       {isOpen && (
         <div className="chat-window">
           <div className="chat-header">
-            <h2>RetailVerse Assistant</h2>
+            <h2>Walmart Assistant</h2>
             <div className="header-buttons">
               <button onClick={handleNewChat} className="new-chat-btn" title="New Chat">🔄</button>
               <button onClick={toggleChat} className="close-btn" title="Close Chat">&times;</button>
@@ -608,7 +615,7 @@ async function preProcessMessage(message){
                 🎤
               </button>
             )}
-            <button onClick={() => handleSend()} disabled={isLoading || !input.trim() || isConversationMode}>Send</button>
+            <button onClick={() => handleSend()} disabled={isLoading || !input.trim() || isConversationMode}>➤</button>
           </div>
         </div>
       )}
