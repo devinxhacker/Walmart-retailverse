@@ -31,7 +31,7 @@ const Admin = () => {
     setProductsLoading(true);
     setProductsError(null);
     try {
-      const response = await axios.get('http://localhost:5000/api/products');
+      const response = await axios.get(import.meta.env.VITE_BACKEND_API +'/api/products');
       setProducts(response.data);
     } catch (err) {
       setProductsError('Failed to load products');
@@ -81,12 +81,12 @@ const Admin = () => {
       };
       if (editingId) {
         // Update existing product
-        const response = await axios.put(`http://localhost:5000/api/products/${editingId}`, productData);
+        const response = await axios.put(import.meta.env.VITE_BACKEND_API +`/api/products/${editingId}`, productData);
         setProducts(products.map(p => p._id === editingId ? response.data : p));
         setFormSuccess('Product updated successfully!');
       } else {
         // Create new product, ensure rating and numReviews are set
-        const response = await axios.post('http://localhost:5000/api/products', {
+        const response = await axios.post(import.meta.env.VITE_BACKEND_API +'/api/products', {
           ...productData,
           rating: 0,
           numReviews: 0
@@ -107,7 +107,7 @@ const Admin = () => {
     if (!window.confirm('Are you sure you want to delete this product?')) return;
     
     try {
-      await axios.delete(`http://localhost:5000/api/products/${id}`);
+      await axios.delete(import.meta.env.VITE_BACKEND_API +`/api/products/${id}`);
       setProducts(products.filter(p => p._id !== id));
       alert('Product deleted successfully!');
     } catch (err) {

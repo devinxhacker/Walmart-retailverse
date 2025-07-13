@@ -54,7 +54,7 @@ const Cart = () => {
         shippingPrice: 0,
         totalPrice: subtotal,
       };
-      await axios.post('http://localhost:5000/api/orders', orderData);
+      await axios.post(import.meta.env.VITE_BACKEND_API +'/api/orders', orderData);
       clearCart();
       setCart([]);
       setOrderSuccess(true);

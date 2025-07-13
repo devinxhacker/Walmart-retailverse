@@ -160,7 +160,7 @@ const Chatbot = () => {
 
   async function sendToCart(productId) {
     try {
-      const { data: product } = await axios.get(`http://localhost:5000/api/products/${productId}`);
+      const { data: product } = await axios.get(import.meta.env.VITE_BACKEND_API +`/api/products/${productId}`);
       if (product) {
         addToCart(product, 1);
         setMessages(prev => [...prev, { role: 'assistant', content: `Added ${product.name} to your cart.`, id: Date.now().toString() }]);
@@ -193,7 +193,7 @@ const Chatbot = () => {
 
   async function addToWishlist(productId) {
     try {
-      const { data: product } = await axios.get(`http://localhost:5000/api/products/${productId}`);
+      const { data: product } = await axios.get(import.meta.env.VITE_BACKEND_API +`/api/products/${productId}`);
       if (product) {
         const isWished = wishlist.some(p => p._id === product._id);
         if (!isWished) {
@@ -211,7 +211,7 @@ const Chatbot = () => {
 
   async function removeFromWishlist(productId) {
     try {
-      const { data: product } = await axios.get(`http://localhost:5000/api/products/${productId}`);
+      const { data: product } = await axios.get(import.meta.env.VITE_BACKEND_API +`/api/products/${productId}`);
       if (product) {
         const isWished = wishlist.some(p => p._id === product._id);
         if (isWished) {
@@ -249,7 +249,7 @@ const Chatbot = () => {
     let botMessageId = Date.now().toString();
     try {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Locating product for 3D view...', id: botMessageId }]);
-      const { data: product } = await axios.get(`http://localhost:5000/api/products/${productId}`);
+      const { data: product } = await axios.get(import.meta.env.VITE_BACKEND_API +`/api/products/${productId}`);
       if (!product) {
         setMessages(prev => prev.map(m => m.id === botMessageId ? {...m, content: "Sorry, I couldn't find that product."} : m));
         return;
@@ -259,7 +259,7 @@ const Chatbot = () => {
       const modelUrl = `${window.location.origin}/model-ar/index.html?model=${modelName}`;
 
       setMessages(prev => prev.map(m => m.id === botMessageId ? {...m, content: 'Checking for existing 3D model...'} : m));
-      const checkRes = await fetch(`http://localhost:5000/api/model-exists/${modelName}`);
+      const checkRes = await fetch(import.meta.env.VITE_BACKEND_API +`/api/model-exists/${modelName}`);
       const checkData = await checkRes.json();
 
       if (checkData.exists) {
@@ -269,7 +269,7 @@ const Chatbot = () => {
       }
 
       setMessages(prev => prev.map(m => m.id === botMessageId ? {...m, content: 'No existing model found. Generating a new one... This might take a moment.'} : m));
-      const genRes = await fetch('http://localhost:5000/api/generate-model', {
+      const genRes = await fetch(import.meta.env.VITE_BACKEND_API +'/api/generate-model', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageUrl: product.image, modelName })
@@ -356,7 +356,7 @@ async function preProcessMessage(message){
   const recentHistory = messages.slice(-9).map(m => ({ role: m.role, content: m.content }));
 
 
-  const products = await fetch("http://localhost:5000/api/chatbot/query", {
+  const products = await fetch(import.meta.env.VITE_BACKEND_API +"/api/chatbot/query", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

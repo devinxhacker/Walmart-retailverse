@@ -20,10 +20,10 @@ const ProductDetails = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/api/products/${id}`);
+        const { data } = await axios.get(import.meta.env.VITE_BACKEND_API + `/api/products/${id}`);
         setProduct(data);
         // Fetch related products (same category, exclude current)
-        const res = await axios.get('http://localhost:5000/api/products');
+        const res = await axios.get(import.meta.env.VITE_BACKEND_API + '/api/products');
         setRelated(res.data.filter(p => p._id !== data._id && p.category === data.category).slice(0, 4));
       } catch (err) {
         setError('Product not found');
@@ -62,7 +62,7 @@ const ProductDetails = () => {
 
     // 1. Check if model already exists
       try {
-        const checkRes = await fetch(`http://localhost:5000/api/model-exists/${modelName}`);
+        const checkRes = await fetch(import.meta.env.VITE_BACKEND_API + `/api/model-exists/${modelName}`);
         const checkData = await checkRes.json();
         if (checkData.exists) {
           // Model exists, redirect to viewer
@@ -81,7 +81,7 @@ const ProductDetails = () => {
     try {
       // POST to backend endpoint (to be implemented) to generate and save model
       setTextTo3D("Generating 3D Model...");
-      const genRes = await fetch('http://localhost:5000/api/generate-model', {
+      const genRes = await fetch(import.meta.env.VITE_BACKEND_API + '/api/generate-model', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageUrl, modelName })

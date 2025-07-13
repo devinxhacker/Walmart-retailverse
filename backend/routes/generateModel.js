@@ -39,13 +39,13 @@ router.post('/generate-model', async (req, res) => {
 
     // Prepare JSON payload for the AR server (no file upload, just URL)
     const payload = {
-      imageUrl: 'http://localhost:5173/images/' + modelName.replace('.glb', '.jpg'),
+      imageUrl: process.env.FRONTEND_API_KEY + '/images/' + modelName.replace('.glb', '.jpg'),
     };
 
     console.log('Payload for AR server:', payload);
 
     // Send request to AR server as JSON
-    const arRes = await axios.post('http://localhost:3000/generate-3d-model', payload, {
+    const arRes = await axios.post(process.env.AR_SERVER_KEY + '/generate-3d-model', payload, {
       headers: { 'Content-Type': 'application/json' },
       timeout: 5 * 60 * 1000 // 5 minutes timeout
     });
